@@ -5,16 +5,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
+	"runtime"
 )
 
 const (
 	defaultPort uint16 = 8080
 )
 
+var curDir = func() string {
+	_, filename, _, _ := runtime.Caller(0)
+	return filepath.Dir(filename)
+}()
+
 func main() {
 	flag.Parse()
 
-	http.HandleFunc("/", serveRoot)
+	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWs)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", defaultPort), nil)
@@ -23,8 +30,16 @@ func main() {
 	}
 }
 
-func serveRoot(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, fmt.Sprintf("Method %s not allowed", r.Method), http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, filepath.Join(curDir, "static", "index.html"))
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
