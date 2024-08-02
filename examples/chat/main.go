@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"path/filepath"
 	"runtime"
+
+	"example.com/websocket/examples/chat/chat"
 )
 
 const (
@@ -21,8 +23,11 @@ var curDir = func() string {
 func main() {
 	flag.Parse()
 
+	hub := chat.NewHub()
+	go hub.Run()
+
 	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", serveWs)
+	http.HandleFunc("/ws", serveWs(hub))
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", defaultPort), nil)
 	if err != nil {
@@ -40,4 +45,10 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.ServeFile(w, r, filepath.Join(curDir, "static", "index.html"))
+}
+
+func serveWs(hub *chat.Hub) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		chat.Serve(hub, w, r)
+	}
 }
