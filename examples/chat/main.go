@@ -37,8 +37,14 @@ func main() {
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
+		switch basePath := filepath.Base(r.URL.Path); basePath {
+		case "index.html", "index.css", "index.js":
+			http.ServeFile(w, r, filepath.Join(curDir, "static", basePath))
+			return
+		default:
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
 	}
 	if r.Method != http.MethodGet {
 		http.Error(w, fmt.Sprintf("Method %s not allowed", r.Method), http.StatusMethodNotAllowed)
