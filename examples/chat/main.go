@@ -41,7 +41,3 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, filepath.Join(curDir, "static", "index.html"))
 }
-
-func serveWs(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("WebSocket endpoint"))
-}
