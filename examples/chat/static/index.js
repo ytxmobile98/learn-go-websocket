@@ -25,13 +25,15 @@ window.onload = () => {
         return false;
     };
 
-    if (window["WebSocket"]) {
+    if (window.WebSocket) {
         conn = new WebSocket("ws://" + document.location.host + "/ws");
+
         conn.onclose = function (evt) {
             const item = document.createElement("div");
             item.innerHTML = "<b>Connection closed.</b>";
             appendLog(item);
         };
+
         conn.onmessage = function (evt) {
             const messages = evt.data.split('\n');
             for (const message of messages) {
