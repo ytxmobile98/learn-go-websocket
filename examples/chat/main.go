@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"runtime"
 
+	"example.com/websocket/common"
 	"example.com/websocket/examples/chat/chat"
 )
 
@@ -15,10 +15,7 @@ const (
 	defaultPort uint16 = 8080
 )
 
-var curDir = func() string {
-	_, filename, _, _ := runtime.Caller(0)
-	return filepath.Dir(filename)
-}()
+var curDir = common.GetCurDir()
 
 func main() {
 	flag.Parse()
