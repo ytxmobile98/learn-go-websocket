@@ -1,4 +1,4 @@
-window.addEventListener('load', () => {
+window.onload = () => {
     let conn;
 
     const msg = document.getElementById("msg");
@@ -45,4 +45,4 @@ window.addEventListener('load', () => {
         item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
         appendLog(item);
     }
-})
+};
