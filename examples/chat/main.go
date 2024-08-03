@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWs)
 
+	fmt.Printf("Listening on http://127.0.0.1:%d\n", defaultPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", defaultPort), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
