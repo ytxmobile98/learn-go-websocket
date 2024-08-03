@@ -1,4 +1,4 @@
-window.onload = () => {
+window.onload = async () => {
     let conn;
 
     const msg = document.getElementById("msg");
@@ -13,25 +13,28 @@ window.onload = () => {
         }
     }
 
-    form.onsubmit = () => {
-        if (!conn) {
-            return false;
-        }
-        if (!msg.value) {
-            return false;
-        }
-        conn.send(msg.value);
-        msg.value = "";
-        return false;
-    };
-
-    if (window.WebSocket) {
+    async function newConnection() {
         conn = new WebSocket("ws://" + document.location.host + "/ws");
 
-        conn.onclose = function (evt) {
+        let resolve, reject;
+        const promise = new Promise((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+
+        conn.onclose = event => {
+            reject(event);
+        }
+        conn.onopen = () => {
+            resolve(conn);
+        };
+
+        conn.onclose = () => {
             const item = document.createElement("div");
             item.innerHTML = "<b>Connection closed.</b>";
             appendLog(item);
+
+            conn = undefined;
         };
 
         conn.onmessage = function (evt) {
@@ -42,6 +45,37 @@ window.onload = () => {
                 appendLog(item);
             }
         };
+
+        return promise;
+    }
+
+    form.onsubmit = () => {
+        queueMicrotask(async () => {
+            if (!conn) {
+                try {
+                    conn = await newConnection();
+
+                    const item = document.createElement("div");
+                    item.innerHTML = "<b>Connection reopened.</b>";
+                    appendLog(item);
+                } catch (err) {
+                    conn = undefined;
+                    return;
+                }
+            }
+
+            if (!msg.value) {
+                return;
+            }
+            conn.send(msg.value);
+            msg.value = "";
+        });
+
+        return false;
+    };
+
+    if (window.WebSocket) {
+        conn = await newConnection();
     } else {
         const item = document.createElement("div");
         item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
