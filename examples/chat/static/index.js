@@ -1,7 +1,9 @@
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
     let conn;
+
     const msg = document.getElementById("msg");
     const log = document.getElementById("log");
+    const form = document.getElementById("form");
 
     function appendLog(item) {
         const doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
@@ -11,7 +13,7 @@ window.addEventListener('load', function() {
         }
     }
 
-    document.getElementById("form").onsubmit = function () {
+    form.onsubmit = () => {
         if (!conn) {
             return false;
         }
