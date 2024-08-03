@@ -17,7 +17,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: wsWriteBufferSize,
 }
 
-func Serve(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func Serve(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)

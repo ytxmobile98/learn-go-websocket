@@ -23,11 +23,8 @@ var curDir = func() string {
 func main() {
 	flag.Parse()
 
-	hub := chat.NewHub()
-	go hub.Run()
-
 	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", serveWs(hub))
+	http.HandleFunc("/ws", serveWs)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", defaultPort), nil)
 	if err != nil {
@@ -53,8 +50,6 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join(curDir, "static", "index.html"))
 }
 
-func serveWs(hub *chat.Hub) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		chat.Serve(hub, w, r)
-	}
+func serveWs(w http.ResponseWriter, r *http.Request) {
+	chat.Serve(w, r)
 }

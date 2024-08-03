@@ -1,10 +1,17 @@
 package chat
 
+var hub *Hub
+
+func init() {
+	hub = NewHub()
+	go hub.Run()
+}
+
 type Hub struct {
-	clients    map[*Client]bool // registered clients
-	broadcast  chan []byte      // inbound messages from the clients
-	register   chan *Client     // register requests from the clients
-	unregister chan *Client     // unregister requests from clients
+	clients    map[*Client]struct{} // registered clients
+	broadcast  chan []byte          // inbound messages from the clients
+	register   chan *Client         // register requests from the clients
+	unregister chan *Client         // unregister requests from clients
 }
 
 func NewHub() *Hub {
@@ -12,7 +19,7 @@ func NewHub() *Hub {
 		broadcast:  make(chan []byte),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		clients:    make(map[*Client]struct{}),
 	}
 }
 
@@ -20,7 +27,7 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client] = true
+			h.clients[client] = struct{}{}
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
