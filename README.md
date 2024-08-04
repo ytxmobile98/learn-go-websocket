@@ -12,3 +12,6 @@
 ## References
 
 * [**RFC 6455: The WebSocket Protocol**](https://datatracker.ietf.org/doc/html/rfc6455)
+* Go modules
+    * [html/template](https://pkg.go.dev/html/template)
+    * [websocket](https://pkg.go.dev/github.com/gorilla/websocket)
