@@ -5,6 +5,9 @@
 ### From [`gorilla/websocket`](https://github.com/gorilla/websocket)
 
 * [Chat example](./examples/chat/)
+* [Command example](./examples/command/)
+* [Echo example](./examples/echo/)
+* [File watch example](./examples/filewatch/)
 
 ## References
 
